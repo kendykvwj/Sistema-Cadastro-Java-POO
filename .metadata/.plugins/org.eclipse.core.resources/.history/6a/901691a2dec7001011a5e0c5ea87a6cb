@@ -1,0 +1,153 @@
+package app;
+
+import java.util.Scanner;
+import model.Produto;
+import service.produtoService;
+
+public class Main {
+    
+    public static void main(String[] args) {
+       
+        produtoService service = new produtoService();
+        Scanner scanner = new Scanner(System.in);
+        int opcao;
+        int proximoId = 101; 
+       
+        service.adicionarProduto(new Produto(proximoId++, "Mouse Gamer RGB", 89.90, 50));
+        service.adicionarProduto(new Produto(proximoId++, "Teclado Mecânico", 299.99, 20));
+        service.adicionarProduto(new Produto(proximoId++, "Monitor 24 Polegadas", 750.00, 15));
+
+    
+        do {
+            exibirMenu();
+            
+           
+            while (!scanner.hasNextInt()) {
+                System.out.println("⚠️ Entrada inválida. Digite um número para a opção.");
+                scanner.next(); 
+                exibirMenu();
+            }
+            opcao = scanner.nextInt();
+            scanner.nextLine();
+            
+            
+            switch (opcao) {
+                case 1:
+                    // Chamar o método listar
+                    service.listarProdutos();
+                    break;
+                case 2:
+                    // Chamar o método adicionar (CREATE)
+                    adicionarNovoProduto(scanner, service, proximoId++);
+                    break;
+                case 3:
+                    // Chamar o método buscar (READ)
+                    buscarProduto(scanner, service);
+                    break;
+                case 4:
+                    // Chamar o método atualizar (UPDATE)
+                    atualizarPrecoProduto(scanner, service);
+                    break;
+                case 5:
+                    // Chamar o método remover (DELETE)
+                    removerProduto(scanner, service);
+                    break;
+                case 0:
+                    System.out.println("👋 Encerrando o sistema. Volte sempre!");
+                    break;
+                default:
+                    System.out.println("❌ Opção não reconhecida. Tente novamente.");
+            }
+        } while (opcao != 0); // O loop continua enquanto a opção não for 0
+        
+        // 4. Fechar o Scanner ao sair
+        scanner.close(); 
+    }
+
+    // Método auxiliar para exibir o menu
+    private static void exibirMenu() {
+        System.out.println("\n--- MENU DE GERENCIAMENTO DE PRODUTOS ---");
+        System.out.println("1. Listar Todos os Produtos");
+        System.out.println("2. Adicionar Novo Produto");
+        System.out.println("3. Buscar Produto por ID");
+        System.out.println("4. Atualizar Preço por ID");
+        System.out.println("5. Remover Produto por ID");
+        System.out.println("0. Sair");
+        System.out.print("👉 Escolha uma opção: ");
+    }
+    
+    // Método auxiliar para o caso 2: Adicionar Produto
+    private static void adicionarNovoProduto(Scanner scanner, ProdutoService service, int novoId) {
+        System.out.println("\n--- Adicionar Produto ---");
+        System.out.println("ID a ser usado: " + novoId);
+        
+        System.out.print("Nome: ");
+        String nome = scanner.nextLine();
+        
+        System.out.print("Preço (ex: 12.34): ");
+        double preco = scanner.nextDouble();
+        
+        System.out.print("Quantidade em Estoque: ");
+        int quantidade = scanner.nextInt();
+        
+        // Cria o objeto e chama o Service
+        Produto novoProduto = new Produto(novoId, nome, preco, quantidade);
+        service.adicionarProduto(novoProduto);
+    }
+    
+    // Método auxiliar para os casos 3, 4 e 5: Busca
+    private static int solicitarId(Scanner scanner, String acao) {
+        System.out.print("Digite o ID do produto para " + acao + ": ");
+        // Garantir que a entrada seja um número inteiro
+        while (!scanner.hasNextInt()) {
+            System.out.println("⚠️ ID inválido. Digite um número inteiro.");
+            scanner.next(); // Descarta a entrada incorreta
+            System.out.print("Digite o ID do produto para " + acao + ": ");
+        }
+        int id = scanner.nextInt();
+        scanner.nextLine(); // Consome a quebra de linha
+        return id;
+    }
+    
+    // Método auxiliar para o caso 3: Buscar Produto
+    private static void buscarProduto(Scanner scanner, produtoService service) {
+        int idBusca = solicitarId(scanner, "buscar");
+        Produto produtoEncontrado = service.buscarPorId(idBusca);
+        
+        if (produtoEncontrado != null) {
+            System.out.println("🔎 Produto Encontrado:");
+            produtoEncontrado.exibirInformacoes(); // Ou use toString()
+        } else {
+            System.out.println("❌ Produto com ID " + idBusca + " não encontrado.");
+        }
+    }
+
+    // Método auxiliar para o caso 4: Atualizar Preço
+    private static void atualizarPrecoProduto(Scanner scanner, produtoService service) {
+        int idAtualizar = solicitarId(scanner, "atualizar o preço");
+        
+        Produto produtoExistente = service.buscarPorId(idAtualizar);
+        if (produtoExistente == null) {
+            System.out.println("❌ Produto com ID " + idAtualizar + " não encontrado.");
+            return;
+        }
+
+        System.out.print("Digite o NOVO preço (ex: 50.99): ");
+        // Garantir que a entrada seja um número
+        while (!scanner.hasNextDouble()) {
+            System.out.println("⚠️ Preço inválido. Digite um número.");
+            scanner.next(); // Descarta a entrada incorreta
+            System.out.print("Digite o NOVO preço (ex: 50.99): ");
+        }
+        double novoPreco = scanner.nextDouble();
+        scanner.nextLine();
+        
+        service.atualizarPreco(idAtualizar, novoPreco);
+    }
+
+    // Método auxiliar para o caso 5: Remover Produto
+    private static void removerProduto(Scanner scanner, ProdutoService service) {
+        int idRemover = solicitarId(scanner, "remover");
+        service.removerProduto(idRemover);
+    }
+}

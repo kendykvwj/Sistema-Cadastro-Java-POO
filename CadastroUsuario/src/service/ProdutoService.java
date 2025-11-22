@@ -1,0 +1,71 @@
+package service;
+
+import java.util.ArrayList;
+
+import model.Produto;
+
+public class ProdutoService { 
+	private ArrayList<Produto> produtos;
+
+    
+	public ProdutoService() {
+		this.produtos = new ArrayList<>();
+	}
+	
+	//CREATE
+	public void adicionarProduto(Produto produto) {
+		this.produtos.add(produto);
+		System.out.println("Produto adicionado com sucesso: " + produto.getNome());
+	}
+	//READ
+	public boolean listarProdutos() {
+		if(produtos.isEmpty()) {
+			System.out.println("A lista de produtos está vazia.");
+			return false;
+		}
+		System.out.println("\n---Lista de Produtos ---");
+		for(Produto produto: produtos) {
+			
+			produto.exibirInformacoes(); 
+		}
+		System.out.println("------------------\n");
+		return true;
+	}
+	public Produto buscarPorId(int id) {
+		for(Produto produto : produtos) {
+			if(produto.getId()==id) {
+				return produto;
+			}
+		}
+		return null;
+	}
+	public boolean removerProduto(int id) {
+		Produto produtoParaRemover = buscarPorId(id);
+		
+		if(produtoParaRemover !=null) {
+			produtos.remove(produtoParaRemover);
+			System.out.println("Produto ID " + id + " (" + produtoParaRemover.getNome() + ") removido.");
+			return true;
+		}else {
+			System.out.println("Erro: Produto com ID " + id + " não encontrado."); 
+			return false;
+		}
+	}
+    
+    // UPDATE
+	public boolean atualizarPreco(int id,double novoPreco) {
+		Produto produtoParaAtualizar = buscarPorId(id);
+		
+		if(produtoParaAtualizar!=null) {
+			
+			produtoParaAtualizar.setPreco(novoPreco); 
+            
+		
+			System.out.println(" Preço do produto ID " + id + " (" + produtoParaAtualizar.getNome() + ") atualizado para R$" + String.format("%.2f", novoPreco));
+			return true;
+		}else {
+			System.out.println("Erro: Produto com ID " + id + " não encontrado."); 
+			return false;
+		}
+	}
+}

@@ -1,0 +1,71 @@
+package service;
+
+import java.util.ArrayList;
+
+import model.Produto;
+
+public class ProdutoService { // Corrigido o nome da classe para começar com maiúscula: ProdutoService
+	private ArrayList<Produto> produtos;
+
+    // CONSTRUTOR CORRIGIDO: Inicializa a lista internamente.
+	public ProdutoService() {
+		this.produtos = new ArrayList<>();
+	}
+	
+	//CREATE
+	public void adicionarProduto(Produto produto) {
+		this.produtos.add(produto);
+		System.out.println("Produto adicionado com sucesso: " + produto.getNome());
+	}
+	//READ
+	public boolean listarProdutos() {
+		if(produtos.isEmpty()) {
+			System.out.println("A lista de produtos está vazia.");
+			return false;
+		}
+		System.out.println("\n---Lista de Produtos ---");
+		for(Produto produto: produtos) {
+			// Usando o toString() (se você implementá-lo) ou exibirInformacoes()
+			produto.exibirInformacoes(); 
+		}
+		System.out.println("------------------\n");
+		return true;
+	}
+	public Produto buscarPorId(int id) {
+		for(Produto produto : produtos) {
+			if(produto.getId()==id) {
+				return produto;
+			}
+		}
+		return null;
+	}
+	public boolean removerProduto(int id) {
+		Produto produtoParaRemover = buscarPorId(id);
+		
+		if(produtoParaRemover !=null) {
+			produtos.remove(produtoParaRemover);
+			System.out.println("Produto ID " + id + " (" + produtoParaRemover.getNome() + ") removido.");
+			return true;
+		}else {
+			System.out.println("❌ Erro: Produto com ID " + id + " não encontrado."); // Corrigido erro de digitação
+			return false;
+		}
+	}
+    
+    // U - UPDATE: Atualização de Preço
+	public boolean atualizarPreco(int id,double novoPreco) {
+		Produto produtoParaAtualizar = buscarPorId(id);
+		
+		if(produtoParaAtualizar!=null) {
+			// CORREÇÃO 1: Usar setPreco, e não setNome
+			produtoParaAtualizar.setPreco(novoPreco); 
+            
+			// CORREÇÃO 2: Corrigir a string de impressão
+			System.out.println("🔄 Preço do produto ID " + id + " (" + produtoParaAtualizar.getNome() + ") atualizado para R$" + String.format("%.2f", novoPreco));
+			return true;
+		}else {
+			System.out.println("❌ Erro: Produto com ID " + id + " não encontrado."); // Corrigido erro de digitação
+			return false;
+		}
+	}
+}

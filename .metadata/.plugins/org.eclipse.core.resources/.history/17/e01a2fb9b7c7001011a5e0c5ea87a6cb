@@ -1,0 +1,27 @@
+package service;
+
+import java.util.ArrayList;
+
+import model.Produto;
+
+public class produtoService {
+	private ArrayList<Produto> produtos;
+
+	public produtoService(ArrayList<Produto> produtos) {
+		super();
+		this.produtos = produtos;
+	}
+	
+	//CREATE
+	public void adicionarProduto(Produto produto) {
+		this.produtos.add(produto);
+		System.out.println("Produto adicinado com sucesso: " + produto.getNome());
+	}
+	//READ
+	public boolean listarProdutos() {
+		if(produtos.isEmpty()) {
+			System.out.println("A lista de produtos está vazia.");
+		}
+		return false;
+	}
+}
